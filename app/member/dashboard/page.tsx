@@ -42,6 +42,7 @@ interface MemberData {
   address: string
   postalCode: string
   phoneNumber: string
+  phone?: string
   photo?: string
   institutionName: string
   workAddress: string
@@ -72,6 +73,33 @@ interface DashboardStats {
 }
 
 export default function MemberDashboard() {
+  const defaultMemberData: MemberData = {
+    id: 1,
+    email: 'anggota@pgri.id',
+    npa: '123456789',
+    nik: '1234567890123456',
+    name: 'Anggota PGRI',
+    birthPlace: 'Unknown',
+    birthDate: new Date().toISOString(),
+    gender: 'Unknown',
+    address: 'Unknown',
+    postalCode: '00000',
+    phoneNumber: '081234567890',
+    institutionName: 'Sekolah Dasar Negeri 1',
+    workAddress: 'Unknown',
+    hasEducatorCert: false,
+    status: 'active',
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+    religion: { name: 'Unknown' },
+    province: { name: 'Unknown' },
+    regency: { name: 'Unknown' },
+    district: { name: 'Unknown' },
+    job: { name: 'Unknown' },
+    education: { name: 'Unknown' },
+    employeeStatus: { name: 'Unknown' },
+    teachingLevels: [{ name: 'Unknown' }]
+  }
   const [memberData, setMemberData] = useState<MemberData | null>(null)
   const [stats, setStats] = useState<DashboardStats | null>(null)
   const [loading, setLoading] = useState(true)
@@ -132,16 +160,7 @@ export default function MemberDashboard() {
       } else {
         console.log('Dashboard: API failed, using fallback data')
         // Set fallback data jika API gagal
-        setMemberData({
-          id: 1,
-          name: 'Anggota PGRI',
-          email: 'anggota@pgri.id',
-          npa: '123456789',
-          nik: '1234567890123456',
-          phone: '081234567890',
-          joinDate: new Date().toISOString(),
-          institutionName: 'Sekolah Dasar Negeri 1'
-        })
+        setMemberData(defaultMemberData)
         setError('Menggunakan data demo - silakan login untuk data sebenarnya')
       }
       
@@ -155,16 +174,7 @@ export default function MemberDashboard() {
     } catch (error) {
       console.error('Error fetching dashboard data:', error)
       // Set fallback data jika terjadi error
-      setMemberData({
-        id: 1,
-        name: 'Anggota PGRI',
-        email: 'anggota@pgri.id',
-        npa: '123456789',
-        nik: '1234567890123456',
-        phone: '081234567890',
-        joinDate: new Date().toISOString(),
-        institutionName: 'Sekolah Dasar Negeri 1'
-      })
+      setMemberData(defaultMemberData)
       setStats({
         totalMembers: 1250,
         totalEvents: 45,
