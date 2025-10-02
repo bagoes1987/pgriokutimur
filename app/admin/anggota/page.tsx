@@ -42,6 +42,7 @@ interface Member {
   id: string;
   npa: string;
   name: string;
+  fullName?: string;
   email: string;
   password: string;
   plainPassword?: string;
@@ -51,6 +52,7 @@ interface Member {
   birthDate: string;
   gender: string;
   address: string;
+  village?: string;
   institutionName: string;
   workAddress: string;
   isApproved: boolean;
@@ -58,13 +60,22 @@ interface Member {
   createdAt: string;
   photo?: string;
   bloodType?: string;
-  religion?: { name: string };
-  province?: { name: string };
-  regency?: { name: string };
-  district?: { name: string };
-  job?: { name: string };
-  education?: { name: string };
-  employeeStatus?: { name: string };
+  religion?: { id?: number; name: string };
+  province?: { id?: number; name: string };
+  regency?: { id?: number; name: string };
+  district?: { id?: number; name: string };
+  job?: { id?: number; name: string };
+  education?: { id?: number; name: string };
+  employeeStatus?: { id?: number; name: string };
+  // Numeric foreign keys returned by API
+  religionId?: number;
+  provinceId?: number;
+  regencyId?: number;
+  districtId?: number;
+  villageId?: number;
+  jobId?: number;
+  educationId?: number;
+  employeeStatusId?: number;
   rank?: string;
   subjects?: string;
   hasEducatorCert?: boolean;
@@ -143,7 +154,7 @@ export default function AdminAnggotaPage() {
   });
   const [editPhotoFile, setEditPhotoFile] = useState<File | null>(null);
   const [editPhotoPreview, setEditPhotoPreview] = useState<string | null>(null);
-  const [photoTimestamps, setPhotoTimestamps] = useState<{[key: number]: number}>({});
+  const [photoTimestamps, setPhotoTimestamps] = useState<{[key: string]: number}>({});
 
   useEffect(() => {
     fetchDistricts();
@@ -181,18 +192,18 @@ export default function AdminAnggotaPage() {
       const loadCascadingData = async () => {
         try {
           // Load regencies if province exists
-          if (editingMember.province?.id) {
-            await fetchRegencies(editingMember.province.id);
+          if (editingMember.provinceId) {
+            await fetchRegencies(editingMember.provinceId);
           }
 
           // Load districts if regency exists
-          if (editingMember.regency?.id) {
-            await fetchDistrictsForEdit(editingMember.regency.id);
+          if (editingMember.regencyId) {
+            await fetchDistrictsForEdit(editingMember.regencyId);
           }
 
           // Load villages if district exists
-          if (editingMember.district?.id) {
-            await fetchVillages(editingMember.district.id);
+          if (editingMember.districtId) {
+            await fetchVillages(editingMember.districtId);
           }
         } catch (error) {
           console.error("Error loading cascading data:", error);
@@ -277,7 +288,7 @@ export default function AdminAnggotaPage() {
 
   // Refresh photo timestamps to force cache-busting
   const refreshPhotoTimestamps = () => {
-    const newTimestamps: {[key: number]: number} = {};
+    const newTimestamps: {[key: string]: number} = {};
     const currentTime = Date.now();
     
     members.forEach((member: Member) => {
@@ -314,7 +325,7 @@ export default function AdminAnggotaPage() {
         setTotalEntries(data.totalEntries || 0);
         
         // Initialize/refresh photo timestamps for cache-busting
-        const refreshedTimestamps: {[key: number]: number} = {};
+        const refreshedTimestamps: {[key: string]: number} = {};
         const currentTime = Date.now();
         
         data.members.forEach((member: Member) => {
@@ -1808,7 +1819,7 @@ export default function AdminAnggotaPage() {
                         </label>
                         <select
                           name="provinceId"
-                          defaultValue={editingMember.province?.id || ""}
+                          defaultValue={editingMember.provinceId || ""}
                           onChange={(e) => {
                             const provinceId = parseInt(e.target.value);
                             if (provinceId) {
@@ -1839,7 +1850,7 @@ export default function AdminAnggotaPage() {
                         </label>
                         <select
                           name="regencyId"
-                          defaultValue={editingMember.regency?.id || ""}
+                          defaultValue={editingMember.regencyId || ""}
                           onChange={(e) => {
                             const regencyId = parseInt(e.target.value);
                             if (regencyId) {
@@ -1870,7 +1881,7 @@ export default function AdminAnggotaPage() {
                         </label>
                         <select
                           name="districtId"
-                          defaultValue={editingMember.district?.id || ""}
+                          defaultValue={editingMember.districtId || ""}
                           onChange={(e) => {
                             const districtId = parseInt(e.target.value);
                             if (districtId) {
