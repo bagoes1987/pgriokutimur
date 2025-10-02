@@ -320,11 +320,11 @@ export async function PUT(
       }
     });
 
-    console.log('📤 API: Sending response with final member data, photo:', finalUpdatedMember.photo);
+    console.log('📤 API: Sending response with final member data, photo:', finalUpdatedMember?.photo);
     return NextResponse.json({
       success: true,
       message: 'Data anggota berhasil diperbarui',
-      member: finalUpdatedMember
+      member: finalUpdatedMember || updatedMember
     });
 
   } catch (error) {
