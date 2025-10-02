@@ -99,10 +99,19 @@ export async function GET(request: NextRequest) {
       }
     }
 
-    // Format tanggal
-    const formatDate = (dateString: string | null) => {
-      if (!dateString) return '-'
-      const date = new Date(dateString)
+    // Format tanggal (robust terhadap Date | string | null/undefined)
+    const formatDate = (dateInput: unknown): string => {
+      if (!dateInput) return '-'
+      let date: Date
+      if (dateInput instanceof Date) {
+        date = dateInput
+      } else if (typeof dateInput === 'string') {
+        const parsed = new Date(dateInput)
+        if (isNaN(parsed.getTime())) return '-'
+        date = parsed
+      } else {
+        return '-'
+      }
       return date.toLocaleDateString('id-ID', {
         day: '2-digit',
         month: 'long',
@@ -546,7 +555,11 @@ export async function GET(request: NextRequest) {
 
     await browser.close()
 
-    return new NextResponse(pdf, {
+    const pdfArrayBuffer = new ArrayBuffer(pdf.byteLength)
+    const pdfView = new Uint8Array(pdfArrayBuffer)
+    pdfView.set(pdf)
+
+    return new NextResponse(pdfArrayBuffer, {
       headers: {
         'Content-Type': 'application/pdf',
         'Content-Disposition': `attachment; filename="Biodata_${member.name?.replace(/\s+/g, '_')}.pdf"`
