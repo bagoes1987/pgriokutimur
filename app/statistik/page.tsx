@@ -109,6 +109,8 @@ export default function StatistikPage() {
          totalMembers: 0,
          totalNews: 0,
          totalOfficers: 0,
+         totalKabupatenOfficers: 0,
+         totalCabangOfficers: 0,
          membersByDistrict: [],
          membersByGender: [],
          membersByBirthYear: [],
