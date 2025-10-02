@@ -49,7 +49,8 @@ export function verifyToken(token: string): AuthUser | null {
     console.log('VerifyToken: Token verified successfully:', decoded)
     return decoded
   } catch (error) {
-    console.log('VerifyToken: Token verification failed:', error.message)
+    const msg = error instanceof Error ? error.message : String(error)
+    console.log('VerifyToken: Token verification failed:', msg)
     return null
   }
 }
@@ -142,8 +143,10 @@ export async function getCurrentUser(token: string): Promise<AuthUser | null> {
         id: member.id,
         email: member.email,
         name: member.name,
-        npa: member.npa || member.oldNpa,
-        photoPath: member.photoPath,
+        npa: typeof member.npa === 'string'
+          ? member.npa
+          : (typeof member.oldNpa === 'string' ? member.oldNpa : undefined),
+        photoPath: member.photo,
         role: 'member',
         isActive: member.isActive
       }
