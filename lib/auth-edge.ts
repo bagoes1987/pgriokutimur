@@ -42,12 +42,19 @@ export async function verifyTokenEdge(token: string): Promise<AuthUser | null> {
     
     const secret = getSecretKey()
     const { payload } = await jwtVerify(token, secret)
-    
-    const user = payload as AuthUser
+    const user: AuthUser = {
+      id: typeof payload.id === 'number' ? payload.id : Number(payload.id),
+      email: typeof payload.email === 'string' ? payload.email : undefined,
+      username: typeof payload.username === 'string' ? payload.username : undefined,
+      name: typeof payload.name === 'string' ? payload.name : '',
+      role: payload.role === 'admin' ? 'admin' : 'member',
+      isActive: payload.isActive === true
+    }
     console.log('VerifyTokenEdge: Token verified successfully:', user)
     return user
   } catch (error) {
-    console.log('VerifyTokenEdge: Token verification failed:', error.message)
+    const msg = error instanceof Error ? error.message : String(error)
+    console.log('VerifyTokenEdge: Token verification failed:', msg)
     return null
   }
 }
