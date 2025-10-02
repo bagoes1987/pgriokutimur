@@ -20,8 +20,9 @@ export async function PUT(
     const { title, excerpt, content, isPublished, image, categoryId } = await request.json();
 
     // Check if news exists
+    const newsId = parseInt(params.id)
     const existingNews = await prisma.news.findUnique({
-      where: { id: params.id }
+      where: { id: newsId }
     });
 
     if (!existingNews) {
@@ -45,7 +46,7 @@ export async function PUT(
       const existingSlug = await prisma.news.findFirst({
         where: { 
           slug,
-          id: { not: params.id }
+          id: { not: newsId }
         }
       });
       
@@ -56,7 +57,7 @@ export async function PUT(
 
     // Update news
     const updatedNews = await prisma.news.update({
-      where: { id: params.id },
+      where: { id: newsId },
       data: {
         title: title || existingNews.title,
         slug,
@@ -108,8 +109,9 @@ export async function DELETE(
     }
 
     // Check if news exists
+    const newsId = parseInt(params.id)
     const existingNews = await prisma.news.findUnique({
-      where: { id: params.id }
+      where: { id: newsId }
     });
 
     if (!existingNews) {
@@ -121,7 +123,7 @@ export async function DELETE(
 
     // Delete news
     await prisma.news.delete({
-      where: { id: params.id }
+      where: { id: newsId }
     });
 
     return NextResponse.json({
