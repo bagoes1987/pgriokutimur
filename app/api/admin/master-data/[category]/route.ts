@@ -74,14 +74,14 @@ export async function GET(
 
     return NextResponse.json({
       success: true,
-      data: data.map(item => ({
-        id: item.id.toString(),
-        name: item.name,
-        code: item.code || '',
-        description: item.description || '',
+      data: (data as any[]).map(item => ({
+        id: (item as any).id?.toString?.() || String((item as any).id),
+        name: (item as any).name,
+        code: ('code' in (item as any) ? ((item as any).code || '') : ''),
+        description: ('description' in (item as any) ? ((item as any).description || '') : ''),
         isActive: true,
-        createdAt: item.createdAt?.toISOString() || new Date().toISOString(),
-        updatedAt: item.updatedAt?.toISOString() || new Date().toISOString()
+        createdAt: (item as any).createdAt ? new Date((item as any).createdAt).toISOString() : new Date().toISOString(),
+        updatedAt: (item as any).updatedAt ? new Date((item as any).updatedAt).toISOString() : new Date().toISOString()
       }))
     })
 
@@ -126,7 +126,7 @@ export async function POST(
     switch (category) {
       case 'provinces':
         newItem = await prisma.province.create({
-          data: { name: name.trim(), code: code?.trim() || '' }
+          data: { name: name.trim() }
         })
         break
       case 'cities':
@@ -141,19 +141,18 @@ export async function POST(
         newItem = await prisma.regency.create({
           data: { 
             name: name.trim(), 
-            code: code?.trim() || '',
             provinceId: firstProvince.id
           }
         })
         break
       case 'positions':
         newItem = await prisma.job.create({
-          data: { name: name.trim(), description: description?.trim() || '' }
+          data: { name: name.trim() }
         })
         break
       case 'school-types':
         newItem = await prisma.teachingLevel.create({
-          data: { name: name.trim(), description: description?.trim() || '' }
+          data: { name: name.trim() }
         })
         break
       case 'news-categories':
@@ -167,17 +166,17 @@ export async function POST(
         break
       case 'religions':
         newItem = await prisma.religion.create({
-          data: { name: name.trim(), description: description?.trim() || '' }
+          data: { name: name.trim() }
         })
         break
       case 'educations':
         newItem = await prisma.education.create({
-          data: { name: name.trim(), description: description?.trim() || '' }
+          data: { name: name.trim() }
         })
         break
       case 'employee-statuses':
         newItem = await prisma.employeeStatus.create({
-          data: { name: name.trim(), description: description?.trim() || '' }
+          data: { name: name.trim() }
         })
         break
       default:
@@ -191,13 +190,13 @@ export async function POST(
       success: true,
       message: 'Data created successfully',
       data: {
-        id: newItem.id.toString(),
-        name: newItem.name,
-        code: newItem.code || '',
-        description: newItem.description || '',
+        id: (newItem as any).id?.toString?.() || String((newItem as any).id),
+        name: (newItem as any).name,
+        code: ('code' in (newItem as any) ? (((newItem as any).code) || '') : ''),
+        description: ('description' in (newItem as any) ? (((newItem as any).description) || '') : ''),
         isActive: true,
-        createdAt: newItem.createdAt?.toISOString() || new Date().toISOString(),
-        updatedAt: newItem.updatedAt?.toISOString() || new Date().toISOString()
+        createdAt: (newItem as any).createdAt ? new Date((newItem as any).createdAt).toISOString() : new Date().toISOString(),
+        updatedAt: (newItem as any).updatedAt ? new Date((newItem as any).updatedAt).toISOString() : new Date().toISOString()
       }
     })
 
