@@ -35,25 +35,25 @@ export async function PUT(
       case 'provinces':
         updatedItem = await prisma.province.update({
           where: { id: parseInt(id) },
-          data: { name: name.trim(), code: code?.trim() || '' }
+          data: { name: name.trim() }
         })
         break
       case 'cities':
         updatedItem = await prisma.regency.update({
           where: { id: parseInt(id) },
-          data: { name: name.trim(), code: code?.trim() || '' }
+          data: { name: name.trim() }
         })
         break
       case 'positions':
         updatedItem = await prisma.job.update({
           where: { id: parseInt(id) },
-          data: { name: name.trim(), description: description?.trim() || '' }
+          data: { name: name.trim() }
         })
         break
       case 'school-types':
         updatedItem = await prisma.teachingLevel.update({
           where: { id: parseInt(id) },
-          data: { name: name.trim(), description: description?.trim() || '' }
+          data: { name: name.trim() }
         })
         break
       case 'news-categories':
@@ -73,17 +73,18 @@ export async function PUT(
         )
     }
 
+    const item: any = updatedItem
     return NextResponse.json({
       success: true,
       message: 'Data updated successfully',
       data: {
-        id: updatedItem.id.toString(),
-        name: updatedItem.name,
-        code: updatedItem.code || '',
-        description: updatedItem.description || '',
+        id: (item.id ?? '').toString(),
+        name: item.name,
+        code: item.code || '',
+        description: item.description || '',
         isActive: true,
-        createdAt: updatedItem.createdAt?.toISOString() || new Date().toISOString(),
-        updatedAt: updatedItem.updatedAt?.toISOString() || new Date().toISOString()
+        createdAt: item.createdAt ? new Date(item.createdAt).toISOString() : new Date().toISOString(),
+        updatedAt: item.updatedAt ? new Date(item.updatedAt).toISOString() : new Date().toISOString()
       }
     })
 
