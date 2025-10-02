@@ -1,14 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { cookies } from 'next/headers'
 import { getCurrentUser } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import { writeFile, mkdir, unlink } from 'fs/promises'
 import { existsSync } from 'fs'
 import path from 'path'
+export const dynamic = 'force-dynamic'
 
 export async function GET(request: NextRequest) {
   try {
-    const token = cookies().get('auth-token')?.value
+    const token = request.cookies.get('auth-token')?.value
     if (!token) {
       return NextResponse.json(
         { error: 'Token tidak ditemukan' },
@@ -65,7 +65,7 @@ export async function GET(request: NextRequest) {
 
 export async function PUT(request: NextRequest) {
   try {
-    const token = cookies().get('auth-token')?.value
+    const token = request.cookies.get('auth-token')?.value
     if (!token) {
       return NextResponse.json(
         { error: 'Token tidak ditemukan' },

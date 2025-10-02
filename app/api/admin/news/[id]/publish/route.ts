@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { cookies } from 'next/headers';
 import { getCurrentUser } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
+export const dynamic = 'force-dynamic'
 
 export async function PUT(
   request: NextRequest,
@@ -10,7 +10,7 @@ export async function PUT(
   try {
     const { published } = await request.json();
     
-    const token = cookies().get('auth-token')?.value;
+    const token = request.cookies.get('auth-token')?.value;
     if (!token) {
       return NextResponse.json(
         { error: 'Token tidak ditemukan' },

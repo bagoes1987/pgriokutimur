@@ -206,9 +206,13 @@ export default function RegisterPage() {
       
       // Log FormData contents
       console.log('FormData entries:')
-      for (let [key, value] of formData.entries()) {
-        console.log(`  ${key}:`, value instanceof File ? `File(${value.name}, ${value.size} bytes)` : value)
-      }
+      formData.forEach((value, key) => {
+        if (value instanceof File) {
+          console.log(`  ${key}:`, `File(${value.name}, ${value.size} bytes)`)
+        } else {
+          console.log(`  ${key}:`, value)
+        }
+      })
 
       const response = await fetch('/api/public/register', {
         method: 'POST',

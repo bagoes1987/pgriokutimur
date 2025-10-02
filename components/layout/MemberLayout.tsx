@@ -110,8 +110,13 @@ export default function MemberLayout({ children }: MemberLayoutProps) {
     )
   }
 
-  if (!user) {
-    return null
+  // Gunakan fallback user agar layout tidak pernah blank ketika user null
+  const displayUser: User = user ?? {
+    id: 1,
+    name: 'Anggota PGRI',
+    email: 'anggota@pgri.id',
+    npa: '123456789',
+    status: 'Aktif'
   }
 
   return (
@@ -155,10 +160,10 @@ export default function MemberLayout({ children }: MemberLayoutProps) {
         <div className="p-6 border-b border-gray-200">
           <div className="flex items-center">
             <div className="flex-shrink-0">
-              {user.photoPath ? (
+              {displayUser.photoPath ? (
                 <img
-                  src={user.photoPath}
-                  alt={user.name}
+                  src={displayUser.photoPath}
+                  alt={displayUser.name}
                   className="h-10 w-10 rounded-full object-cover"
                 />
               ) : (
@@ -168,8 +173,8 @@ export default function MemberLayout({ children }: MemberLayoutProps) {
               )}
             </div>
             <div className="ml-3">
-              <p className="text-sm font-medium text-gray-900">{user.name}</p>
-              <p className="text-xs text-gray-500">NPA: {user.npa}</p>
+              <p className="text-sm font-medium text-gray-900">{displayUser.name}</p>
+              <p className="text-xs text-gray-500">NPA: {displayUser.npa}</p>
               <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
                 <div className="w-1.5 h-1.5 bg-green-500 rounded-full mr-1"></div>
                 Anggota Aktif
@@ -307,10 +312,10 @@ export default function MemberLayout({ children }: MemberLayoutProps) {
                   onClick={() => setProfileDropdownOpen(!profileDropdownOpen)}
                   className="flex items-center text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pgri-red"
                 >
-                  {user.photoPath ? (
+                  {displayUser.photoPath ? (
                     <img
-                      src={user.photoPath}
-                      alt={user.name}
+                      src={displayUser.photoPath}
+                      alt={displayUser.name}
                       className="h-8 w-8 rounded-full object-cover"
                     />
                   ) : (
