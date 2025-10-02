@@ -1,11 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
-import { verifyToken } from '@/lib/auth'
+import { getCurrentUser } from '@/lib/auth'
 
 export async function GET(request: NextRequest) {
   try {
-    const authResult = await verifyToken(request)
-    if (!authResult.success || authResult.user?.role !== 'admin') {
+    const token = request.cookies.get('auth-token')?.value
+    const user = token ? await getCurrentUser(token) : null
+    if (!user || user.role !== 'admin') {
       return NextResponse.json(
         { error: 'Unauthorized' },
         { status: 401 }
@@ -30,8 +31,9 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    const authResult = await verifyToken(request)
-    if (!authResult.success || authResult.user?.role !== 'admin') {
+    const token = request.cookies.get('auth-token')?.value
+    const user = token ? await getCurrentUser(token) : null
+    if (!user || user.role !== 'admin') {
       return NextResponse.json(
         { error: 'Unauthorized' },
         { status: 401 }
@@ -79,8 +81,9 @@ export async function POST(request: NextRequest) {
 
 export async function PUT(request: NextRequest) {
   try {
-    const authResult = await verifyToken(request)
-    if (!authResult.success || authResult.user?.role !== 'admin') {
+    const token = request.cookies.get('auth-token')?.value
+    const user = token ? await getCurrentUser(token) : null
+    if (!user || user.role !== 'admin') {
       return NextResponse.json(
         { error: 'Unauthorized' },
         { status: 401 }
