@@ -47,7 +47,11 @@ export default function TestAuthPage() {
       })
       
       console.log('Login response status:', loginResponse.status)
-      console.log('Login response headers:', [...loginResponse.headers.entries()])
+      const headerEntries: Array<[string, string]> = []
+      loginResponse.headers.forEach((value, key) => {
+        headerEntries.push([key, value])
+      })
+      console.log('Login response headers:', headerEntries)
       
       const loginData = await loginResponse.json()
       console.log('Login response data:', loginData)
@@ -71,7 +75,8 @@ export default function TestAuthPage() {
       }
     } catch (err) {
       console.error('Error:', err)
-      setError('Login test error: ' + err.message)
+      const msg = err instanceof Error ? err.message : String(err)
+      setError('Login test error: ' + msg)
     } finally {
       setLoading(false)
     }
