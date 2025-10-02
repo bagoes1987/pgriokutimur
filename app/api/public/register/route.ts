@@ -227,23 +227,39 @@ export async function POST(request: NextRequest) {
       },
       autoLogin: true
     })
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Registration error:', error)
-    console.error('Error stack:', error.stack)
-    console.error('Error message:', error.message)
-    
-    // Log more details about the error
-    if (error.code) {
-      console.error('Error code:', error.code)
+
+    if (error instanceof Error) {
+      console.error('Error stack:', error.stack)
+      console.error('Error message:', error.message)
+    } else {
+      // Safely handle non-Error values without direct property access on unknown
+      const maybeObj = (typeof error === 'object' && error !== null)
+        ? (error as Record<string, unknown>)
+        : null
+      const stack = maybeObj && 'stack' in maybeObj ? String((maybeObj as any).stack) : undefined
+      const message = maybeObj && 'message' in maybeObj ? String((maybeObj as any).message) : undefined
+      if (stack) console.error('Error stack:', stack)
+      if (message) console.error('Error message:', message)
+      console.error('Non-Error thrown:', error)
     }
-    if (error.meta) {
-      console.error('Error meta:', error.meta)
+
+    const errAny = error as any
+    if (errAny?.code) {
+      console.error('Error code:', errAny.code)
     }
-    
+    if (errAny?.meta) {
+      console.error('Error meta:', errAny.meta)
+    }
+
     return NextResponse.json(
       { 
         error: 'Terjadi kesalahan saat mendaftar',
-        details: process.env.NODE_ENV === 'development' ? error.message : undefined
+        details:
+          process.env.NODE_ENV === 'development'
+            ? (error instanceof Error ? error.message : 'Unknown error')
+            : undefined
       },
       { status: 500 }
     )
