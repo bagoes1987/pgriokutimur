@@ -342,8 +342,13 @@ export async function POST(request: NextRequest) {
 
     await browser.close()
 
+    // Convert Buffer/Uint8Array to fresh ArrayBuffer for Response body
+    const pdfArrayBuffer = new ArrayBuffer(pdf.byteLength)
+    const pdfView = new Uint8Array(pdfArrayBuffer)
+    pdfView.set(pdf)
+
     // Return PDF
-    return new NextResponse(pdf, {
+    return new NextResponse(pdfArrayBuffer, {
       headers: {
         'Content-Type': 'application/pdf',
         'Content-Disposition': `attachment; filename="kartu-anggota-${member.name.replace(/\s+/g, '-')}.pdf"`
