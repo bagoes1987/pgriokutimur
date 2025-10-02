@@ -435,7 +435,10 @@ export default function AdminPengurusPage() {
                                 <Edit className="h-4 w-4" />
                               </button>
                               <button
-                                onClick={() => handleDelete(officer.id)}
+                                onClick={() => {
+                                  setOfficerToDelete(officer);
+                                  setShowDeleteModal(true);
+                                }}
                                 className="text-red-600 hover:text-red-900"
                               >
                                 <Trash2 className="h-4 w-4" />
@@ -540,7 +543,10 @@ export default function AdminPengurusPage() {
                                 <Edit className="h-4 w-4" />
                               </button>
                               <button
-                                onClick={() => handleDelete(officer.id)}
+                                onClick={() => {
+                                  setOfficerToDelete(officer);
+                                  setShowDeleteModal(true);
+                                }}
                                 className="text-red-600 hover:text-red-900"
                               >
                                 <Trash2 className="h-4 w-4" />
