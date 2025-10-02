@@ -1,0 +1,241 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// Master Data Models
+model Religion {
+  id      Int      @id @default(autoincrement())
+  name    String   @unique
+  members Member[]
+  
+  @@map("religions")
+}
+
+model Province {
+  id           Int        @id @default(autoincrement())
+  name         String     @unique
+  regencies    Regency[]
+  members      Member[]
+  
+  @@map("provinces")
+}
+
+model Regency {
+  id          Int        @id @default(autoincrement())
+  name        String
+  provinceId  Int
+  province    Province   @relation(fields: [provinceId], references: [id])
+  districts   District[]
+  members     Member[]
+  
+  @@map("regencies")
+}
+
+model District {
+  id         Int       @id @default(autoincrement())
+  name       String
+  regencyId  Int
+  regency    Regency   @relation(fields: [regencyId], references: [id])
+  villages   Village[]
+  members    Member[]
+  officers   Officer[]
+  
+  @@map("districts")
+}
+
+model Village {
+  id         Int      @id @default(autoincrement())
+  name       String
+  districtId Int
+  district   District @relation(fields: [districtId], references: [id])
+  
+  @@map("villages")
+}
+
+model Job {
+  id      Int      @id @default(autoincrement())
+  name    String   @unique
+  members Member[]
+  
+  @@map("jobs")
+}
+
+model Education {
+  id      Int      @id @default(autoincrement())
+  name    String   @unique
+  members Member[]
+  
+  @@map("educations")
+}
+
+model EmployeeStatus {
+  id      Int      @id @default(autoincrement())
+  name    String   @unique
+  members Member[]
+  
+  @@map("employee_statuses")
+}
+
+model TeachingLevel {
+  id      Int      @id @default(autoincrement())
+  name    String   @unique
+  members Member[] @relation("MemberTeachingLevels")
+  
+  @@map("teaching_levels")
+}
+
+// User Models
+model Admin {
+  id        Int      @id @default(autoincrement())
+  username  String   @unique
+  email     String   @unique
+  password  String
+  name      String
+  photo     String?
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  news      News[]
+  
+  @@map("admins")
+}
+
+model Member {
+  id                Int              @id @default(autoincrement())
+  // Login credentials
+  email             String           @unique
+  password          String
+  plainPassword     String?          // Password asli untuk admin
+  
+  // Personal data
+  npa               String?
+  oldNpa            String?
+  nik               String           @unique
+  name              String
+  birthPlace        String
+  birthDate         DateTime
+  gender            String // "Laki-Laki" or "Perempuan"
+  religionId        Int
+  religion          Religion         @relation(fields: [religionId], references: [id])
+  bloodType         String? // "A", "B", "AB", "O"
+  address           String
+  postalCode        String
+  phoneNumber       String
+  photo             String?
+  
+  // Work data
+  provinceId        Int
+  province          Province         @relation(fields: [provinceId], references: [id])
+  regencyId         Int
+  regency           Regency          @relation(fields: [regencyId], references: [id])
+  districtId        Int
+  district          District         @relation(fields: [districtId], references: [id])
+  village           String?
+  institutionName   String
+  workAddress       String
+  jobId             Int
+  job               Job              @relation(fields: [jobId], references: [id])
+  educationId       Int
+  education         Education        @relation(fields: [educationId], references: [id])
+  employeeStatusId  Int
+  employeeStatus    EmployeeStatus   @relation(fields: [employeeStatusId], references: [id])
+  rank              String?
+  hasEducatorCert   Boolean          @default(false)
+  teachingLevels    TeachingLevel[]  @relation("MemberTeachingLevels")
+  subjects          String?
+  
+  // System fields
+  isActive          Boolean          @default(true)
+  isApproved        Boolean          @default(false)
+  resetToken        String?
+  resetTokenExpiry  DateTime?
+  createdAt         DateTime         @default(now())
+  updatedAt         DateTime         @updatedAt
+  
+  // Relations
+  
+  @@map("members")
+}
+
+// Content Models
+model News {
+  id          Int      @id @default(autoincrement())
+  title       String
+  slug        String   @unique
+  content     String
+  excerpt     String?
+  image       String?
+  images      String? // JSON array of image paths
+  categoryId  Int?
+  category    NewsCategory? @relation(fields: [categoryId], references: [id])
+  authorId    Int?
+  author      Admin?   @relation(fields: [authorId], references: [id])
+  isPublished Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  @@map("news")
+}
+
+model NewsCategory {
+  id          Int      @id @default(autoincrement())
+  name        String
+  slug        String   @unique
+  description String?
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  news        News[]
+  
+  @@map("news_categories")
+}
+
+model Officer {
+  id         Int      @id @default(autoincrement())
+  name       String
+  npa        String? // Nomor Pokok Anggota
+  position   String // "Ketua", "Wakil Ketua", "Sekretaris", "Bendahara", "Ketua Bidang"
+  level      String // "Pengurus Kabupaten" or "Pengurus Cabang"
+  districtId Int? // Only for Cabang level
+  district   District? @relation(fields: [districtId], references: [id])
+  whatsapp   String?
+  workplace  String? // Tempat Tugas
+  address    String?
+  photo      String?
+  periode    String?  @default("2025-2030") // Periode jabatan
+  order      Int      @default(0)
+  isActive   Boolean  @default(true)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  
+  @@map("officers")
+}
+
+model About {
+  id        Int      @id @default(autoincrement())
+  title     String
+  content   String
+  vision    String
+  mission   String
+  values    String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  @@map("about")
+}
+
+model Settings {
+  id    Int    @id @default(autoincrement())
+  key   String @unique
+  value String
+  
+  @@map("settings")
+}

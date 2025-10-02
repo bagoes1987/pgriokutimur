@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Login</title>
+</head>
+<body>
+    <h1>Test Login</h1>
+    <button onclick="testLogin()">Test Admin Login</button>
+    <div id="result"></div>
+
+    <script>
+        async function testLogin() {
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = 'Testing login...';
+            
+            try {
+                console.log('Starting login test...');
+                
+                // Test login
+                const loginResponse = await fetch('/api/auth/admin/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username: 'admin', password: 'admin123' })
+                });
+                
+                console.log('Login response status:', loginResponse.status);
+                console.log('Login response headers:', [...loginResponse.headers.entries()]);
+                
+                const loginData = await loginResponse.json();
+                console.log('Login response data:', loginData);
+                
+                if (loginData.success) {
+                    resultDiv.innerHTML += '<br>Login successful!';
+                    console.log('Current cookies after login:', document.cookie);
+                    
+                    // Test auth check
+                    const authResponse = await fetch('/api/auth/me');
+                    console.log('Auth check status:', authResponse.status);
+                    
+                    const authData = await authResponse.json();
+                    console.log('Auth check data:', authData);
+                    
+                    resultDiv.innerHTML += '<br>Auth check: ' + JSON.stringify(authData);
+                    
+                    // Try to access admin dashboard
+                    console.log('Attempting to access admin dashboard...');
+                    window.location.href = '/admin/dashboard';
+                } else {
+                    resultDiv.innerHTML += '<br>Login failed: ' + JSON.stringify(loginData);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                resultDiv.innerHTML += '<br>Error: ' + error.message;
+            }
+        }
+    </script>
+</body>
+</html>

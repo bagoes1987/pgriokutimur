@@ -1,0 +1,17 @@
+{
+  "/not-found": "app/not-found.js",
+  "/login/page": "app/login/page.js",
+  "/member/biodata/page": "app/member/biodata/page.js",
+  "/member/dashboard/page": "app/member/dashboard/page.js",
+  "/api/member/dashboard/route": "app/api/member/dashboard/route.js",
+  "/api/auth/me/route": "app/api/auth/me/route.js",
+  "/api/master/religions/route": "app/api/master/religions/route.js",
+  "/api/member/biodata/route": "app/api/member/biodata/route.js",
+  "/api/master/jobs/route": "app/api/master/jobs/route.js",
+  "/api/master/provinces/route": "app/api/master/provinces/route.js",
+  "/api/master/employee-statuses/route": "app/api/master/employee-statuses/route.js",
+  "/api/master/educations/route": "app/api/master/educations/route.js",
+  "/api/master/teaching-levels/route": "app/api/master/teaching-levels/route.js",
+  "/member/kartu-anggota/page": "app/member/kartu-anggota/page.js",
+  "/api/member/biodata/download/route": "app/api/member/biodata/download/route.js"
+}
